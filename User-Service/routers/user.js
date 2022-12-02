@@ -1,6 +1,14 @@
 const express = require("express");
 
-const User = require("../models/user");
+const User = require("../models/user-orm");
+const {
+  registerUser,
+  loginUser,
+  logoutUser,
+  logoutAllUsers,
+  updateProfile,
+  deleteUser,
+} = require("../models/user-repository");
 const auth = require("../middleware/auth");
 const response = require("../utils/responseFormat");
 const statusCode = require("../utils/statusCode");
@@ -9,17 +17,11 @@ const responseMessage = require("../utils/responseMessage");
 const router = new express.Router();
 
 router.post("/users", async (req, res) => {
-  const user = new User(req.body);
-
   try {
-    await user.save();
-    const token = await user.generateAuthToken();
-    res.status(201).send(
-      response(statusCode[201], responseMessage.CREATE_SUCCESS, {
-        user,
-        token,
-      })
-    );
+    const data = await registerUser(req.body);
+    res
+      .status(201)
+      .send(response(statusCode[201], responseMessage.CREATE_SUCCESS, data));
   } catch (e) {
     res
       .status(400)
@@ -29,14 +31,8 @@ router.post("/users", async (req, res) => {
 
 router.post("/users/login", async (req, res) => {
   try {
-    const user = await User.findByCredentials(
-      req.body.email,
-      req.body.password
-    );
-    const token = await user.generateAuthToken();
-    res.send(
-      response(statusCode[200], responseMessage.LOGIN_SUCCESS, { user, token })
-    );
+    const data = await loginUser(req.body.email, req.body.password);
+    res.send(response(statusCode[200], responseMessage.LOGIN_SUCCESS, data));
   } catch {
     res
       .status(400)
@@ -46,10 +42,7 @@ router.post("/users/login", async (req, res) => {
 
 router.post("/users/logout", auth, async (req, res) => {
   try {
-    req.user.tokens = req.user.tokens.filter(
-      (token) => token.token !== req.token
-    );
-    await req.user.save();
+    await logoutUser(req.user, req.token);
     res.send(response(statusCode[200], responseMessage.LOGOUT_SUCCESS, {}));
   } catch (e) {
     res
@@ -60,8 +53,7 @@ router.post("/users/logout", auth, async (req, res) => {
 
 router.post("/users/logoutAll", auth, async (req, res) => {
   try {
-    req.user.tokens = [];
-    await req.user.save();
+    await logoutAllUsers(req.user);
     res.send();
   } catch (e) {
     res.status(500).send();
@@ -75,21 +67,17 @@ router.get("/users/me", auth, async (req, res) => {
 });
 
 router.patch("/users/me", auth, async (req, res) => {
-  const updates = Object.keys(req.body);
-  const allowedUpdates = ["name", "email", "password", "age"];
-  const isValidOperation = updates.every((update) =>
-    allowedUpdates.includes(update)
-  );
-
-  if (!isValidOperation) {
-    return res.status(400).send({ error: "Invalid updates!" });
-  }
-
   try {
-    updates.forEach((update) => (req.user[update] = req.body[update]));
-    await req.user.save();
+    const { updatedUser, error } = await updateProfile(req.body, req.user);
+
+    if (error) throw new Error(error);
+
     res.send(
-      response(statusCode[200], responseMessage.UPDATE_USER_SUCCESS, req.user)
+      response(
+        statusCode[200],
+        responseMessage.UPDATE_USER_SUCCESS,
+        updatedUser
+      )
     );
   } catch (e) {
     res
@@ -100,7 +88,7 @@ router.patch("/users/me", auth, async (req, res) => {
 
 router.delete("/users/me", auth, async (req, res) => {
   try {
-    await req.user.remove();
+    await deleteUser(req.user);
     res.send(
       response(statusCode[200], responseMessage.DELETE_USER_SUCCESS, req.user)
     );

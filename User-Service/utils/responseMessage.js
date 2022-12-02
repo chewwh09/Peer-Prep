@@ -13,7 +13,7 @@ const responseMessage = {
   READ_USER_PROFILE: "User has successfully retrieve his profile",
 
   UPDATE_USER_SUCCESS: "User has successfully update his user profile.",
-  UPDATE_USER_FAILURE: "User ha failed to update his user profile.",
+  UPDATE_USER_FAILURE: "User has failed to update his user profile.",
 
   DELETE_USER_SUCCESS: "User has successfully deleted his account.",
   DELETE_USER_FAILURE: "User has failed to delete his account.",
