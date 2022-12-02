@@ -3,6 +3,10 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const config = require("../config/config");
 
+const response = require("../utils/responseFormat");
+const statusCode = require("../utils/statusCode");
+const responseMessage = require("../utils/responseMessage");
+
 const auth = async (req, res, next) => {
   try {
     const token = req.header("Authorization").replace("Bearer ", "");
@@ -18,7 +22,9 @@ const auth = async (req, res, next) => {
     req.user = user;
     next();
   } catch {
-    res.status(401).send({ error: "Please authenticate." });
+    res
+      .status(401)
+      .send(response(statusCode[401], responseMessage.UNATHENTICATED, {}));
   }
 };
 

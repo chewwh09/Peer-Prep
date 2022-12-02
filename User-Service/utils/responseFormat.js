@@ -1,8 +1,8 @@
-const responseFormat = ({ statusCode, message, data }) => {
+const responseFormat = (statusCode, message, data) => {
   return {
-    Status_Code: statusCode,
-    Message: message,
-    Data: data,
+    status_code: statusCode,
+    message,
+    data,
   };
 };
 
