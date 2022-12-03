@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  user-service:
+    build:
+      context: ./User-Service
+    command: node index.js
+    ports:
+      - "8001:8001"
+    env_file:
+      - ./User-Service/.env
+    depends_on:
+      - mongo_db
+
+  mongo_db:
+    image: mongo
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: peerPrep
+    volumes:
+      - ./mongo-seed/:/docker-entrypoint-initdb.d/
+      - mongo_db_vol:/data/db
+
+volumes:
+  mongo_db_vol:
