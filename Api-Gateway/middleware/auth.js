@@ -2,11 +2,12 @@ const axios = require("axios");
 
 const response = require("../utils/responseFormat");
 const { statusCode, responseMessage } = require("../utils/responseConstant");
+const routes = require("../config/config");
 
 const auth = async (req, res, next) => {
   try {
     const token = req.get("Authorization");
-    const response = await axios.get("http://localhost:8001/users/me", {
+    const response = await axios.get(`${routes.USER_SERVICE_URL}/users/me`, {
       headers: {
         Authorization: token,
       },

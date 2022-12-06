@@ -2,3 +2,4 @@
 /Api-Gateway/node_modules
 
 .env
+.vscode

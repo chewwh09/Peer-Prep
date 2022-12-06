@@ -3,6 +3,7 @@ const axios = require("axios");
 
 const response = require("../utils/responseFormat");
 const { statusCode, responseMessage } = require("../utils/responseConstant");
+const routes = require("../config/config");
 
 const auth = require("../middleware/auth");
 
@@ -10,7 +11,10 @@ const router = new express.Router();
 
 router.post("/users", async (req, res) => {
   try {
-    const response = await axios.post("http://localhost:8001/users", req.body);
+    const response = await axios.post(
+      `${routes.USER_SERVICE_URL}/users`,
+      req.body
+    );
     res.status(201).send(response.data);
   } catch (e) {
     res
