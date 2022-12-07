@@ -1,5 +1,3 @@
-/User-Service/node_modules
-/Api-Gateway/node_modules
-
 .env
 .vscode
+node_modules
