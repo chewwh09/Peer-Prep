@@ -24,7 +24,7 @@ router.post("/users", async (req, res) => {
   } catch (e) {
     res
       .status(400)
-      .send(response(statusCode[400], responseMessage.CREATE_FAILED, e));
+      .send(response(statusCode[400], responseMessage.CREATE_FAILED, {}));
   }
 });
 

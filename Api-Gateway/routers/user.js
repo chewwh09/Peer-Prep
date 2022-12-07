@@ -26,7 +26,7 @@ router.post("/users", async (req, res) => {
 router.post("/users/login", async (req, res) => {
   try {
     const response = await axios.post(
-      "http://localhost:8001/users/login",
+      `${routes.USER_SERVICE_URL}/users/login`,
       req.body
     );
     res.send(response.data);
@@ -40,7 +40,7 @@ router.post("/users/login", async (req, res) => {
 router.post("/users/logout", auth, async (req, res) => {
   try {
     const response = await axios.post(
-      "http://localhost:8001/users/logout",
+      `${routes.USER_SERVICE_URL}/users/logout`,
       req.body,
       {
         headers: {
@@ -59,7 +59,7 @@ router.post("/users/logout", auth, async (req, res) => {
 router.post("/users/logoutAll", auth, async (req, res) => {
   try {
     const response = await axios.post(
-      "http://localhost:8001/users/logoutAll",
+      `${routes.USER_SERVICE_URL}/users/logoutAll`,
       req.body,
       {
         headers: {
@@ -88,7 +88,7 @@ router.get("/users/me", auth, async (req, res) => {
 router.patch("/users/me", auth, async (req, res) => {
   try {
     const response = await axios.patch(
-      "http://localhost:8001/users/me",
+      `${routes.USER_SERVICE_URL}/users/me`,
       req.body,
       {
         headers: {
@@ -106,7 +106,7 @@ router.patch("/users/me", auth, async (req, res) => {
 
 router.delete("/users/me", auth, async (req, res) => {
   try {
-    const response = await axios.delete("http://localhost:8001/users/me", {
+    const response = await axios.delete(`${routes.USER_SERVICE_URL}/users/me`, {
       headers: {
         Authorization: req.token,
       },
