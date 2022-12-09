@@ -1,6 +1,7 @@
 var stompjs = require("stompjs");
 
 const { matchUsers } = require("../models/matching-repository");
+const { QUEUES } = require("../utils/constants");
 
 var client = stompjs.overWS("ws://localhost:61614/stomp");
 var headers = {
@@ -11,8 +12,8 @@ var headers = {
 client.connect(headers, function (error) {
   console.log("ActiveMQ connected");
 
-  client.subscribe("/queue/findMatch", async (data) => {
+  client.subscribe(QUEUES.FIND_MATCH_QUEUE, async (data) => {
     const matchData = await matchUsers(JSON.parse(data.body));
-    client.send("/queue/findMatchReply", {}, JSON.stringify(matchData));
+    client.send(QUEUES.FIND_MATCH_QUEUE_REPLY, {}, JSON.stringify(matchData));
   });
 });
