@@ -10,8 +10,7 @@ const {
 } = require("../models/user-repository");
 const auth = require("../middleware/auth");
 const response = require("../utils/responseFormat");
-const statusCode = require("../utils/statusCode");
-const responseMessage = require("../utils/responseMessage");
+const { STATUS_CODE, RESPONSE_MESSAGE } = require("../utils/constants");
 
 const router = new express.Router();
 
@@ -20,33 +19,33 @@ router.post("/users", async (req, res) => {
     const data = await registerUser(req.body);
     res
       .status(201)
-      .send(response(statusCode[201], responseMessage.CREATE_SUCCESS, data));
+      .send(response(STATUS_CODE[201], RESPONSE_MESSAGE.CREATE_SUCCESS, data));
   } catch (e) {
     res
       .status(400)
-      .send(response(statusCode[400], responseMessage.CREATE_FAILED, {}));
+      .send(response(STATUS_CODE[400], RESPONSE_MESSAGE.CREATE_FAILED, {}));
   }
 });
 
 router.post("/users/login", async (req, res) => {
   try {
     const data = await loginUser(req.body.email, req.body.password);
-    res.send(response(statusCode[200], responseMessage.LOGIN_SUCCESS, data));
+    res.send(response(STATUS_CODE[200], RESPONSE_MESSAGE.LOGIN_SUCCESS, data));
   } catch {
     res
       .status(400)
-      .send(response(statusCode[400], responseMessage.LOGIN_FAILURE, {}));
+      .send(response(STATUS_CODE[400], RESPONSE_MESSAGE.LOGIN_FAILURE, {}));
   }
 });
 
 router.post("/users/logout", auth, async (req, res) => {
   try {
     await logoutUser(req.user, req.token);
-    res.send(response(statusCode[200], responseMessage.LOGOUT_SUCCESS, {}));
+    res.send(response(STATUS_CODE[200], RESPONSE_MESSAGE.LOGOUT_SUCCESS, {}));
   } catch (e) {
     res
       .status(500)
-      .send(response(statusCode[500], responseMessage.LOGIN_FAILURE, {}));
+      .send(response(STATUS_CODE[500], RESPONSE_MESSAGE.LOGIN_FAILURE, {}));
   }
 });
 
@@ -61,7 +60,7 @@ router.post("/users/logoutAll", auth, async (req, res) => {
 
 router.get("/users/me", auth, async (req, res) => {
   res.send(
-    response(statusCode[200], responseMessage.READ_USER_PROFILE, req.user)
+    response(STATUS_CODE[200], RESPONSE_MESSAGE.READ_USER_PROFILE, req.user)
   );
 });
 
@@ -73,15 +72,17 @@ router.patch("/users/me", auth, async (req, res) => {
 
     res.send(
       response(
-        statusCode[200],
-        responseMessage.UPDATE_USER_SUCCESS,
+        STATUS_CODE[200],
+        RESPONSE_MESSAGE.UPDATE_USER_SUCCESS,
         updatedUser
       )
     );
   } catch (e) {
     res
       .status(400)
-      .send(response(statusCode[400], responseMessage.UPDATE_USER_FAILURE, e));
+      .send(
+        response(STATUS_CODE[400], RESPONSE_MESSAGE.UPDATE_USER_FAILURE, e)
+      );
   }
 });
 
@@ -89,12 +90,14 @@ router.delete("/users/me", auth, async (req, res) => {
   try {
     await deleteUser(req.user);
     res.send(
-      response(statusCode[200], responseMessage.DELETE_USER_SUCCESS, req.user)
+      response(STATUS_CODE[200], RESPONSE_MESSAGE.DELETE_USER_SUCCESS, req.user)
     );
   } catch (e) {
     res
       .status(500)
-      .send(response(statusCode[500], responseMessage.DELETE_USER_FAILURE, e));
+      .send(
+        response(STATUS_CODE[500], RESPONSE_MESSAGE.DELETE_USER_FAILURE, e)
+      );
   }
 });
 

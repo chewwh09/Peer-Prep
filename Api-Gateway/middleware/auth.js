@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 const response = require("../utils/responseFormat");
-const { statusCode, responseMessage } = require("../utils/constants");
+const { STATUS_CODE, RESPONSE_MESSAGE } = require("../utils/constants");
 const routes = require("../config/config");
 
 const auth = async (req, res, next) => {
@@ -21,7 +21,7 @@ const auth = async (req, res, next) => {
   } catch (e) {
     res
       .status(401)
-      .send(response(statusCode[401], responseMessage.UNATHENTICATED, {}));
+      .send(response(STATUS_CODE[401], RESPONSE_MESSAGE.UNATHENTICATED, {}));
   }
 };
 

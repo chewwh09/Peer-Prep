@@ -4,8 +4,7 @@ const User = require("../models/user-orm");
 const config = require("../config/config");
 
 const response = require("../utils/responseFormat");
-const statusCode = require("../utils/statusCode");
-const responseMessage = require("../utils/responseMessage");
+const { STATUS_CODE, RESPONSE_MESSAGE } = require("../utils/constants");
 
 const auth = async (req, res, next) => {
   try {
@@ -24,7 +23,7 @@ const auth = async (req, res, next) => {
   } catch {
     res
       .status(401)
-      .send(response(statusCode[401], responseMessage.UNATHENTICATED, {}));
+      .send(response(STATUS_CODE[401], RESPONSE_MESSAGE.UNATHENTICATED, {}));
   }
 };
 
