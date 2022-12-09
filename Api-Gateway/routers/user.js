@@ -2,7 +2,7 @@ const express = require("express");
 const axios = require("axios");
 
 const response = require("../utils/responseFormat");
-const { statusCode, responseMessage } = require("../utils/responseConstant");
+const { STATUS_CODE, RESPONSE_MESSAGE } = require("../utils/constants");
 const routes = require("../config/config");
 
 const auth = require("../middleware/auth");
@@ -19,7 +19,7 @@ router.post("/users", async (req, res) => {
   } catch (e) {
     res
       .status(400)
-      .send(response(statusCode[400], responseMessage.CREATE_FAILED, {}));
+      .send(response(STATUS_CODE[400], RESPONSE_MESSAGE.CREATE_FAILED, {}));
   }
 });
 
@@ -33,7 +33,7 @@ router.post("/users/login", async (req, res) => {
   } catch (e) {
     res
       .status(400)
-      .send(response(statusCode[400], responseMessage.LOGIN_FAILURE, {}));
+      .send(response(STATUS_CODE[400], RESPONSE_MESSAGE.LOGIN_FAILURE, {}));
   }
 });
 
@@ -52,7 +52,7 @@ router.post("/users/logout", auth, async (req, res) => {
   } catch (e) {
     res
       .status(500)
-      .send(response(statusCode[500], responseMessage.LOGIN_FAILURE, {}));
+      .send(response(STATUS_CODE[500], RESPONSE_MESSAGE.LOGIN_FAILURE, {}));
   }
 });
 
@@ -80,7 +80,7 @@ router.get("/users/me", auth, async (req, res) => {
     res
       .status(500)
       .send(
-        response(statusCode[500], responseMessage.INTERNAL_SERVER_ERROR, {})
+        response(STATUS_CODE[500], RESPONSE_MESSAGE.INTERNAL_SERVER_ERROR, {})
       );
   }
 });
@@ -100,7 +100,9 @@ router.patch("/users/me", auth, async (req, res) => {
   } catch (e) {
     res
       .status(400)
-      .send(response(statusCode[400], responseMessage.UPDATE_USER_FAILURE, {}));
+      .send(
+        response(STATUS_CODE[400], RESPONSE_MESSAGE.UPDATE_USER_FAILURE, {})
+      );
   }
 });
 
@@ -115,7 +117,9 @@ router.delete("/users/me", auth, async (req, res) => {
   } catch (e) {
     res
       .status(500)
-      .send(response(statusCode[500], responseMessage.DELETE_USER_FAILURE, {}));
+      .send(
+        response(STATUS_CODE[500], RESPONSE_MESSAGE.DELETE_USER_FAILURE, {})
+      );
   }
 });
 
