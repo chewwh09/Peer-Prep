@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 const response = require("../utils/responseFormat");
-const { statusCode, responseMessage } = require("../utils/responseConstant");
+const { statusCode, responseMessage } = require("../utils/constants");
 const routes = require("../config/config");
 
 const auth = async (req, res, next) => {

@@ -20,7 +20,9 @@ matchingSchema.pre("save", async function (next) {
 
 matchingSchema.statics.findMatchingRoom = async (difficulty) => {
   const difficultyString = difficulty.toLowerCase().trim();
-  const match = await Matching.findOneAndDelete({ difficultyString });
+  const match = await Matching.findOneAndDelete({
+    difficulty: difficultyString,
+  });
   if (!match) return { error: "No match found" };
 
   return { match };
