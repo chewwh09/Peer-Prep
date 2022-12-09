@@ -7,3 +7,5 @@ mongoose.connect(config.DB_LOCAL_URI, {
 });
 
 // /Users/Admin/mongodb/bin/mongod.exe --dbpath=/Users/Admin/mongodb-data
+
+// C:\Program Files\apache-activemq-5.17.3\bin\win64

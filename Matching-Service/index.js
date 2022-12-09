@@ -1,6 +1,8 @@
 const dotenv = require("dotenv");
 const express = require("express");
+
 require("./db/mongoose");
+require("./activemq/stompClient");
 const matchingRouter = require("./routers/matching");
 
 dotenv.config();

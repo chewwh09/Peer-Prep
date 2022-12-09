@@ -3,7 +3,7 @@ const Matching = require("./matching-orm");
 const matchUsers = async ({ username, difficulty, roomId }) => {
   try {
     const { match, error } = await Matching.findMatchingRoom(difficulty);
-    console.log(match, error);
+
     if (error) {
       const newRecord = new Matching({
         roomId,
