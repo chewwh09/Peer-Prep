@@ -5,7 +5,7 @@ const response = require("../utils/responseFormat");
 const { STATUS_CODE, RESPONSE_MESSAGE } = require("../utils/constants");
 const routes = require("../config/config");
 
-const auth = require("../middleware/auth");
+const { auth } = require("../middleware/auth");
 
 const router = new express.Router();
 

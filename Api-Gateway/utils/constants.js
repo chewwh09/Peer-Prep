@@ -42,6 +42,7 @@ const SOCKET_EVENTS = {
   WAITING_ROOMS: "waitingRoom",
   FIND_MATCH: "findMatch",
   MATCH_FOUND: "matchFound",
+  TIMEOUT: "timeout",
   JOIN_ROOM: "joinRoom",
   CODE: "code",
   UPDATE_CODE: "updateCode",

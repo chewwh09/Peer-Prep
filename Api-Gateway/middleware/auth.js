@@ -25,4 +25,20 @@ const auth = async (req, res, next) => {
   }
 };
 
-module.exports = auth;
+const socketAuth = async (socket, next) => {
+  const token = socket?.handshake?.headers?.authorization;
+  //const token = socket.handshake.auth.token;
+  const response = await axios.get(`${routes.USER_SERVICE_URL}/users/me`, {
+    headers: {
+      Authorization: token,
+    },
+  });
+
+  if (response.status !== 200) {
+    return new Error("Not authenticated");
+  }
+
+  return next();
+};
+
+module.exports = { auth, socketAuth };
