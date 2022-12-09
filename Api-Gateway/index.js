@@ -10,6 +10,7 @@ const {
 } = require("./activemq/stompClient");
 
 const userRouter = require("./routers/user");
+const { SOCKET_EVENTS } = require("./utils/constants");
 
 dotenv.config();
 
@@ -22,26 +23,28 @@ const port = process.env.PORT || 8000;
 app.use(express.json());
 app.use(userRouter);
 
-io.on("connection", (socket) => {
+io.on(SOCKET_EVENTS.CONNECTION, (socket) => {
   console.log("New Websocket connection", socket.id);
 
   var client = initiateQueue(io);
 
-  socket.on("findMatch", (data) => {
-    socket.join("waitingRoom");
-    sendMessage(client, data); // Include questions to set up frontend page.
+  socket.on(SOCKET_EVENTS.FIND_MATCH, (data) => {
+    socket.join(SOCKET_EVENTS.WAITING_ROOMS);
+    sendMessage(client, data);
   });
 
-  socket.on("joinRoom", ({ roomId }) => {
-    socket.leave("waitingRoom");
+  socket.on(SOCKET_EVENTS.JOIN_ROOM, ({ roomId }) => {
+    socket.leave(SOCKET_EVENTS.WAITING_ROOMS);
     socket.join(roomId);
+    // io.to(roomId).emit(SOCKET_EVENTS.UPDATE_QUESTION, question)
+    // question fetch from question microservices
   });
 
-  socket.on("code", ({ roomId, code }) => {
-    socket.broadcast.to(roomId).emit("updateCode", code);
+  socket.on(SOCKET_EVENTS.CODE, ({ roomId, code }) => {
+    socket.broadcast.to(roomId).emit(SOCKET_EVENTS.UPDATE_CODE, code);
   });
 
-  socket.on("disconnect", () => {
+  socket.on(SOCKET_EVENTS.DISCONNECT, () => {
     console.log("A socket has disconnected");
     disconnectQueue(client);
     client = null;
