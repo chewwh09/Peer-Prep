@@ -1,8 +1,8 @@
-const userSchema = require("./user-model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 
+const userSchema = require("./user-model");
 const config = require("../config/config");
 
 userSchema.methods.toJSON = function () {
