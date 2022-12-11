@@ -31,11 +31,17 @@ const initiateSocket = (server) => {
       });
     });
 
-    socket.on(SOCKET_EVENTS.JOIN_ROOM, ({ roomId }) => {
+    socket.on(SOCKET_EVENTS.JOIN_ROOM, async ({ roomId }) => {
       socket.leave(SOCKET_EVENTS.WAITING_ROOMS);
       socket.join(roomId);
-      // io.to(roomId).emit(SOCKET_EVENTS.UPDATE_QUESTION, question)
-      // question fetch from question microservices
+    });
+
+    socket.on(SOCKET_EVENTS.GET_QUESTION, async ({ roomId, difficulty }) => {
+      const response = await axios.get(
+        `${routes.QUESTION_SERVICE_URL}/questions/getQuestion/${difficulty}`
+      );
+      const questionJSON = response.data;
+      io.to(roomId).emit(SOCKET_EVENTS.UPDATE_QUESTION, questionJSON);
     });
 
     socket.on(SOCKET_EVENTS.CODE, ({ roomId, code }) => {

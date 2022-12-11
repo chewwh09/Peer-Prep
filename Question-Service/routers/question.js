@@ -31,7 +31,12 @@ router.get("/questions/getLeetcodeQuestions", (req, res, next) => {
 
 router.get("/questions/getQuestion/:difficulty", async (req, res) => {
   try {
-    const question = await getRandomQuestion(req.params.difficulty);
+    const difficultyStr = req.params.difficulty;
+    if (!difficultyStr) throw new Error();
+
+    const capitalizeString =
+      difficultyStr.charAt(0).toUpperCase() + difficultyStr.slice(1);
+    const question = await getRandomQuestion(capitalizeString);
     res.send(question);
   } catch (e) {
     res.status(500).send();

@@ -44,6 +44,8 @@ const SOCKET_EVENTS = {
   MATCH_FOUND: "matchFound",
   TIMEOUT: "timeout",
   JOIN_ROOM: "joinRoom",
+  GET_QUESTION: "getQuestion",
+  UPDATE_QUESTION: "updateQuestion",
   CODE: "code",
   UPDATE_CODE: "updateCode",
   UPDATE_QUESTION: "updateQuestion",
