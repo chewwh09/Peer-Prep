@@ -1,7 +1,17 @@
 const History = require("./history-orm");
 
-const saveUserHistory = async (historyData) => {
-  const userHistory = new History(historyData);
+const saveUserHistory = async (
+  username,
+  questionDifficulty,
+  questionTitle,
+  questionContent
+) => {
+  const userHistory = new History({
+    username,
+    questionDifficulty,
+    questionTitle,
+    questionContent,
+  });
   await userHistory.save();
   return userHistory;
 };

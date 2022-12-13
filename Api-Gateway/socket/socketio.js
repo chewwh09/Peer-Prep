@@ -36,13 +36,31 @@ const initiateSocket = (server) => {
       socket.join(roomId);
     });
 
-    socket.on(SOCKET_EVENTS.GET_QUESTION, async ({ roomId, difficulty }) => {
-      const response = await axios.get(
-        `${routes.QUESTION_SERVICE_URL}/questions/getQuestion/${difficulty}`
-      );
-      const questionJSON = response.data;
-      io.to(roomId).emit(SOCKET_EVENTS.UPDATE_QUESTION, questionJSON);
-    });
+    socket.on(
+      SOCKET_EVENTS.GET_QUESTION,
+      async ({ usernameOne, usernameTwo, roomId, difficulty }) => {
+        try {
+          const response = await axios.get(
+            `${routes.QUESTION_SERVICE_URL}/questions/getQuestion/${difficulty}`
+          );
+          const questionJSON = response.data;
+          io.to(roomId).emit(SOCKET_EVENTS.UPDATE_QUESTION, questionJSON);
+
+          const savedHistories = await axios.post(
+            `${routes.HISTORY_SERVICE_URL}/history`,
+            {
+              usernameOne,
+              usernameTwo,
+              questionDifficulty: difficulty,
+              questionTitle: questionJSON.questionTitle,
+              questionContent: questionJSON.questionContent,
+            }
+          );
+        } catch (e) {
+          console.log("Error in getting question / saving histories");
+        }
+      }
+    );
 
     socket.on(SOCKET_EVENTS.CODE, ({ roomId, code }) => {
       socket.broadcast.to(roomId).emit(SOCKET_EVENTS.UPDATE_CODE, code);
