@@ -26,9 +26,13 @@ const initiateSocket = (server) => {
     });
 
     socket.on(SOCKET_EVENTS.TIMEOUT, async (data) => {
-      await axios.delete(`${routes.MATCHING_SERVICE_URL}/matching`, {
-        data,
-      });
+      try {
+        await axios.delete(`${routes.MATCHING_SERVICE_URL}/matching`, {
+          data,
+        });
+      } catch (e) {
+        console.log("Unable to delete matching");
+      }
     });
 
     socket.on(SOCKET_EVENTS.JOIN_ROOM, async ({ roomId }) => {
@@ -46,16 +50,13 @@ const initiateSocket = (server) => {
           const questionJSON = response.data;
           io.to(roomId).emit(SOCKET_EVENTS.UPDATE_QUESTION, questionJSON);
 
-          const savedHistories = await axios.post(
-            `${routes.HISTORY_SERVICE_URL}/history`,
-            {
-              usernameOne,
-              usernameTwo,
-              questionDifficulty: difficulty,
-              questionTitle: questionJSON.questionTitle,
-              questionContent: questionJSON.questionContent,
-            }
-          );
+          await axios.post(`${routes.HISTORY_SERVICE_URL}/history`, {
+            usernameOne,
+            usernameTwo,
+            questionDifficulty: difficulty,
+            questionTitle: questionJSON.questionTitle,
+            questionContent: questionJSON.questionContent,
+          });
         } catch (e) {
           console.log("Error in getting question / saving histories");
         }
@@ -64,6 +65,13 @@ const initiateSocket = (server) => {
 
     socket.on(SOCKET_EVENTS.CODE, ({ roomId, code }) => {
       socket.broadcast.to(roomId).emit(SOCKET_EVENTS.UPDATE_CODE, code);
+    });
+
+    socket.on(SOCKET_EVENTS.LEAVE_ROOM, ({ roomId }) => {
+      socket.leave(roomId); // But client side should disconnect the socket.
+      socket.broadcast.to(roomId).emit(SOCKET_EVENTS.PARTNER_LEAVE_ROOM, {
+        message: "Your coding buddy has left the room.",
+      });
     });
 
     socket.on(SOCKET_EVENTS.DISCONNECT, () => {

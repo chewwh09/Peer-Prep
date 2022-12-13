@@ -48,7 +48,8 @@ const SOCKET_EVENTS = {
   UPDATE_QUESTION: "updateQuestion",
   CODE: "code",
   UPDATE_CODE: "updateCode",
-  UPDATE_QUESTION: "updateQuestion",
+  LEAVE_ROOM: "leaveRoom",
+  PARTNER_LEAVE_ROOM: "partnerLeftTheRoom",
 };
 
 const QUEUES = {
