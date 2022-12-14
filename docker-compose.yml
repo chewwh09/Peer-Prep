@@ -3,12 +3,36 @@ services:
   api-gateway:
     build:
       context: ./Api-Gateway
+    environment:
+      - ACTIVE_MQ_ENDPOINT=http://activemq:1883
+      - ACTIVE_MQ_USERNAME=admin
+      - ACTIVE_MQ_PASWORD=admin
+    volumes:
+      - ./publish:/app
+      - /app/node_modules
     ports:
       - "8000:8000"
     env_file:
       - ./Api-Gateway/.env
     depends_on:
       - mongo_db
+      - activemq
+
+  matching-service:
+    build:
+      context: ./Matching-Service
+    ports:
+      - "8002:8002"
+    environment:
+      - DB_LOCAL_URI=mongodb+srv://PeerPrep:%40Redapple0917@peerprep-backend.ojaw0uu.mongodb.net/test
+      - ACTIVE_MQ_ENDPOINT=http://activemq:1883
+      - ACTIVE_MQ_USERNAME=admin
+      - ACTIVE_MQ_PASWORD=admin
+    env_file:
+      - ./Matching-Service/.env
+    depends_on:
+      - mongo_db
+      - activemq
 
   user-service:
     build:
@@ -56,6 +80,9 @@ services:
     volumes:
       - ./mongo-seed/:/docker-entrypoint-initdb.d/
       - mongo_db_vol:/data/db
+
+  activemq:
+    image: rmohr/activemq
 
 volumes:
   mongo_db_vol:

@@ -1,43 +1,44 @@
-var stompjs = require("stompjs");
+const mqtt = require("mqtt");
+const uuid = require("uuid");
 
 const { SOCKET_EVENTS, QUEUES } = require("../utils/constants");
 
-// client.debug = console.log;
-const initiateQueue = (io) => {
-  const client = stompjs.overWS("ws://localhost:61614/stomp");
-  var headers = {
-    login: "admin",
-    passcode: "admin",
+const initiateQueue = (socket, username) => {
+  let options = {
+    username: process.env.ACTIVE_MQ_USERNAME,
+    password: process.env.ACTIVE_MQ_PASWORD,
+    clientId: `publish_${uuid.v1()}`,
+    port: 1883,
   };
 
-  client.connect(headers, function (error) {
-    console.log("ActiveMQ connected");
-
-    client.subscribe(QUEUES.FIND_MATCH_QUEUE_REPLY, (data) => {
-      const parsedData = JSON.parse(data.body);
-      if (parsedData.usernameTwo !== "") {
-        io.to(SOCKET_EVENTS.WAITING_ROOMS).emit(
-          SOCKET_EVENTS.MATCH_FOUND,
-          parsedData
-        );
-      }
-    });
+  const client = mqtt.connect(process.env.ACTIVE_MQ_ENDPOINT, options);
+  client.on("connect", () => {
+    client.subscribe(QUEUES.FIND_MATCH_QUEUE_REPLY);
   });
 
+  client.on("message", (topic, res) => {
+    if (topic === QUEUES.FIND_MATCH_QUEUE_REPLY) {
+      const parsedData = JSON.parse(res.toString());
+      if (
+        parsedData.usernameTwo !== "" &&
+        (parsedData.usernameOne === username ||
+          parsedData.usernameTwo === username)
+      ) {
+        socket.emit(SOCKET_EVENTS.MATCH_FOUND, parsedData);
+      }
+    }
+  });
   return client;
 };
 
 const sendMessage = (client, data) => {
-  if (!client) {
-    return console.log("Client hasn't been setup");
-  }
-  client.send(QUEUES.FIND_MATCH_QUEUE, {}, JSON.stringify(data));
+  client.publish(QUEUES.FIND_MATCH_QUEUE, JSON.stringify(data));
 };
 
 const disconnectQueue = (client) => {
   if (client) {
     console.log("disconnecting queue");
-    client.disconnect();
+    client.end();
   }
 };
 

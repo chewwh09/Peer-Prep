@@ -37,7 +37,7 @@ const socketAuth = async (socket, next) => {
   if (response.status !== 200) {
     return new Error("Not authenticated");
   }
-
+  socket.username = response.data.data.name;
   return next();
 };
 

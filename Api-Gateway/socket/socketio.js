@@ -18,7 +18,7 @@ const initiateSocket = (server) => {
   io.on(SOCKET_EVENTS.CONNECTION, (socket) => {
     console.log("New Websocket connection", socket.id);
 
-    var client = initiateQueue(io);
+    var client = initiateQueue(socket, socket.username);
 
     socket.on(SOCKET_EVENTS.FIND_MATCH, (data) => {
       socket.join(SOCKET_EVENTS.WAITING_ROOMS);
