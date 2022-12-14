@@ -15,8 +15,35 @@ services:
       context: ./User-Service
     ports:
       - "8001:8001"
+    environment:
+      - DB_LOCAL_URI=mongodb+srv://PeerPrep:%40Redapple0917@peerprep-backend.ojaw0uu.mongodb.net/test
+      - SECRET_TOKEN=DOCKER_SECRET_TOKEN
     env_file:
       - ./User-Service/.env
+    depends_on:
+      - mongo_db
+
+  question-service:
+    build:
+      context: ./Question-Service
+    ports:
+      - "8003:8003"
+    environment:
+      - DB_LOCAL_URI=mongodb+srv://PeerPrep:%40Redapple0917@peerprep-backend.ojaw0uu.mongodb.net/test
+    env_file:
+      - ./Question-Service/.env
+    depends_on:
+      - mongo_db
+
+  history-service:
+    build:
+      context: ./History-Service
+    ports:
+      - "8004:8004"
+    environment:
+      - DB_LOCAL_URI=mongodb+srv://PeerPrep:%40Redapple0917@peerprep-backend.ojaw0uu.mongodb.net/test
+    env_file:
+      - ./History-Service/.env
     depends_on:
       - mongo_db
 
