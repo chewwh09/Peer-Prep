@@ -1,7 +1,7 @@
 const mqtt = require("mqtt");
 const uuid = require("uuid");
 
-const { SOCKET_EVENTS, QUEUES } = require("../utils/constants");
+const { SOCKET_EVENTS, TOPICS } = require("../utils/constants");
 
 const initiateQueue = (socket, username) => {
   let options = {
@@ -13,11 +13,11 @@ const initiateQueue = (socket, username) => {
 
   const client = mqtt.connect(process.env.ACTIVE_MQ_ENDPOINT, options);
   client.on("connect", () => {
-    client.subscribe(QUEUES.FIND_MATCH_QUEUE_REPLY);
+    client.subscribe(TOPICS.FIND_MATCH_REPLY_TOPIC);
   });
 
   client.on("message", (topic, res) => {
-    if (topic === QUEUES.FIND_MATCH_QUEUE_REPLY) {
+    if (topic === TOPICS.FIND_MATCH_REPLY_TOPIC) {
       const parsedData = JSON.parse(res.toString());
       if (
         parsedData.usernameTwo !== "" &&
@@ -32,7 +32,7 @@ const initiateQueue = (socket, username) => {
 };
 
 const sendMessage = (client, data) => {
-  client.publish(QUEUES.FIND_MATCH_QUEUE, JSON.stringify(data));
+  client.publish(TOPICS.FIND_MATCH_TOPIC, JSON.stringify(data));
 };
 
 const disconnectQueue = (client) => {

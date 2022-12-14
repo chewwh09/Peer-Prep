@@ -2,7 +2,7 @@ const mqtt = require("mqtt");
 const uuid = require("uuid");
 
 const { matchUsers } = require("../models/matching-repository");
-const { QUEUES } = require("../utils/constants");
+const { TOPICS } = require("../utils/constants");
 
 let options = {
   username: process.env.ACTIVE_MQ_USERNAME,
@@ -13,12 +13,12 @@ let options = {
 
 const client = mqtt.connect(process.env.ACTIVE_MQ_ENDPOINT, options);
 client.on("connect", () => {
-  client.subscribe(QUEUES.FIND_MATCH_QUEUE);
+  client.subscribe(TOPICS.FIND_MATCH_TOPIC);
 });
 
 client.on("message", async (topic, res) => {
-  if (topic === QUEUES.FIND_MATCH_QUEUE) {
+  if (topic === TOPICS.FIND_MATCH_TOPIC) {
     const matchData = await matchUsers(JSON.parse(res.toString()));
-    client.publish(QUEUES.FIND_MATCH_QUEUE_REPLY, JSON.stringify(matchData));
+    client.publish(TOPICS.FIND_MATCH_REPLY_TOPIC, JSON.stringify(matchData));
   }
 });

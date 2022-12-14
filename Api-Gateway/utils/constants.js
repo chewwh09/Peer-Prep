@@ -52,9 +52,9 @@ const SOCKET_EVENTS = {
   PARTNER_LEAVE_ROOM: "partnerLeftTheRoom",
 };
 
-const QUEUES = {
-  FIND_MATCH_QUEUE: "/queue/findMatch",
-  FIND_MATCH_QUEUE_REPLY: "/queue/findMatchReply",
+const TOPICS = {
+  FIND_MATCH_TOPIC: "/topic/findMatch",
+  FIND_MATCH_REPLY_TOPIC: "/topic/findMatchReply",
 };
 
-module.exports = { STATUS_CODE, RESPONSE_MESSAGE, SOCKET_EVENTS, QUEUES };
+module.exports = { STATUS_CODE, RESPONSE_MESSAGE, SOCKET_EVENTS, TOPICS };
