@@ -32,10 +32,10 @@ const auth = async (req, res, next) => {
 };
 
 const socketAuth = async (socket, next) => {
-  const token = socket?.handshake?.headers?.authorization;
-  if (!token) return new Error("Not authenticated");
-
   try {
+    const token = socket?.handshake?.headers?.authorization;
+    if (!token) throw new Error("Not authenticated");
+
     const user = await getRedisCacheValue(token, async () => {
       console.log("cache miss");
       const response = await axios.get(`${routes.USER_SERVICE_URL}/users/me`, {
