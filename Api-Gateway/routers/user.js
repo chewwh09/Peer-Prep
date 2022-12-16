@@ -4,8 +4,8 @@ const axios = require("axios");
 const response = require("../utils/responseFormat");
 const { STATUS_CODE, RESPONSE_MESSAGE } = require("../utils/constants");
 const routes = require("../config/config");
-
 const { auth } = require("../middleware/auth");
+const { deleteRedisCacheKey } = require("../redis/redisClient");
 
 const router = new express.Router();
 
@@ -48,6 +48,7 @@ router.post("/users/logout", auth, async (req, res) => {
         },
       }
     );
+    deleteRedisCacheKey(req.token);
     res.send(response.data);
   } catch (e) {
     res
@@ -56,22 +57,22 @@ router.post("/users/logout", auth, async (req, res) => {
   }
 });
 
-router.post("/users/logoutAll", auth, async (req, res) => {
-  try {
-    const response = await axios.post(
-      `${routes.USER_SERVICE_URL}/users/logoutAll`,
-      req.body,
-      {
-        headers: {
-          Authorization: req.token,
-        },
-      }
-    );
-    res.send(response.data);
-  } catch (e) {
-    res.status(500).send();
-  }
-});
+// router.post("/users/logoutAll", auth, async (req, res) => {
+//   try {
+//     const response = await axios.post(
+//       `${routes.USER_SERVICE_URL}/users/logoutAll`,
+//       req.body,
+//       {
+//         headers: {
+//           Authorization: req.token,
+//         },
+//       }
+//     );
+//     res.send(response.data);
+//   } catch (e) {
+//     res.status(500).send();
+//   }
+// });
 
 router.get("/users/me", auth, async (req, res) => {
   try {
@@ -108,11 +109,13 @@ router.patch("/users/me", auth, async (req, res) => {
 
 router.delete("/users/me", auth, async (req, res) => {
   try {
+    deleteRedisCacheKey(req.token);
     const response = await axios.delete(`${routes.USER_SERVICE_URL}/users/me`, {
       headers: {
         Authorization: req.token,
       },
     });
+    //
     res.send(response.data);
   } catch (e) {
     res
