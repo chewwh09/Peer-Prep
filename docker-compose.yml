@@ -17,6 +17,20 @@ services:
     depends_on:
       - mongo_db
       - activemq
+      - redis
+
+  user-service:
+    build:
+      context: ./User-Service
+    ports:
+      - "8001:8001"
+    environment:
+      - DB_LOCAL_URI=mongodb+srv://PeerPrep:%40Redapple0917@peerprep-backend.ojaw0uu.mongodb.net/test
+      - SECRET_TOKEN=DOCKER_SECRET_TOKEN
+    env_file:
+      - ./User-Service/.env
+    depends_on:
+      - mongo_db
 
   matching-service:
     build:
@@ -33,19 +47,6 @@ services:
     depends_on:
       - mongo_db
       - activemq
-
-  user-service:
-    build:
-      context: ./User-Service
-    ports:
-      - "8001:8001"
-    environment:
-      - DB_LOCAL_URI=mongodb+srv://PeerPrep:%40Redapple0917@peerprep-backend.ojaw0uu.mongodb.net/test
-      - SECRET_TOKEN=DOCKER_SECRET_TOKEN
-    env_file:
-      - ./User-Service/.env
-    depends_on:
-      - mongo_db
 
   question-service:
     build:
@@ -83,6 +84,9 @@ services:
 
   activemq:
     image: rmohr/activemq
+
+  redis:
+    image: redis
 
 volumes:
   mongo_db_vol:

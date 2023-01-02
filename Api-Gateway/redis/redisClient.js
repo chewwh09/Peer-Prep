@@ -1,12 +1,11 @@
 const Redis = require("redis");
-const { client } = require("stompjs");
 
 const DEFAULT_EXPIRATION = 3600;
 let redisClient = null;
 
 const initiateRedis = () => {
   console.log("Initiating Redis");
-  redisClient = Redis.createClient();
+  redisClient = Redis.createClient({ host: "redis" });
 };
 
 const getRedisCacheValue = (key, callback) => {
